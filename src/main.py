@@ -90,6 +90,10 @@ def linkedin(event):
     url = "https://www.linkedin.com/in/remydaubenfeld"
     webbrowser.open(url)
 
+def portfolio(event):
+    url = "https://remy-daubenfeld.fr"
+    webbrowser.open(url)
+
 # endregion : LIEN HYPERTEXTE
 
 
@@ -148,10 +152,12 @@ def window_app():
 
     frame_footer = Frame(display_list, borderwidth = 0, relief=FLAT, bg=bg_gray)
     frame_footer.pack(side=BOTTOM, fill = X)
-    photo_footer = PhotoImage(file=resource_path("img/footer_logo.png"))
-    title_footer = Label(frame_footer, text="by Rémy DAUBENFELD", image = photo_footer, compound ="right", font=(font, 10), bg=bg_gray)
-    title_footer.image = photo_footer
-    title_footer.pack(side=LEFT, expand=TRUE, pady=5) 
+
+    logo_portfolio = PhotoImage(file=resource_path("img/footer_logo.png"))
+    portfolio_button = Button(frame_footer, text="by Rémy DAUBENFELD", image = logo_portfolio, compound ="right", font=(font, 10), bg=bg_gray, relief = FLAT, cursor='tcross')
+    portfolio_button.image = logo_portfolio
+    portfolio_button.bind("<Button-1>", portfolio)
+    portfolio_button.pack(side=LEFT, expand=TRUE, pady=5) 
       
     logo_linkedin = PhotoImage(file=resource_path("img/linkedin.png"))
     linkedin_button = Button(frame_footer, image = logo_linkedin, relief = FLAT, cursor="tcross")
