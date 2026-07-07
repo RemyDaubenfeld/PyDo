@@ -7,6 +7,22 @@ from datetime import date
 import sqlite3
 import webbrowser
 import os
+import sys
+
+
+def resource_path(relative_path):
+    """Résout le chemin vers une ressource, compatible PyInstaller --onefile."""
+    base = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    return os.path.join(base, relative_path)
+
+
+def db_path():
+    """Base de données dans le dossier de l'exécutable (persiste entre les lancements)."""
+    if getattr(sys, 'frozen', False):
+        base = os.path.dirname(sys.executable)
+    else:
+        base = os.path.abspath(os.path.dirname(__file__))
+    return os.path.join(base, "todolist.db")
 
 from tkinter import ttk
 import tkinter as tk
@@ -24,7 +40,7 @@ from PIL import Image, ImageTk
 def database() : 
     global mycursor, connection
     
-    connection = sqlite3.connect("todolist.db")
+    connection = sqlite3.connect(db_path())
     
     mycursor = connection.cursor()
 
@@ -82,7 +98,7 @@ def linkedin(event):
 # Import du logo
 def logo():
     # Charger l'image, réduire la taille et convertir
-    image_ico = Image.open("img/logo.png")
+    image_ico = Image.open(resource_path("img/logo.png"))
     resized_img = image_ico.copy()
     resized_img.thumbnail((90, 90))
     img = ImageTk.PhotoImage(resized_img)
@@ -93,7 +109,7 @@ def logo():
     
 # Changement du logo et du titre des fenêtres
 def window_icon(window, window_title):
-    display_list.iconphoto(True, tk.PhotoImage(file = "img/logo.png"))
+    display_list.iconphoto(True, tk.PhotoImage(file=resource_path("img/logo.png")))
     window.title(window_title)
 
 # Initialisation de la fenêtre et de la couleur
@@ -132,18 +148,18 @@ def window_app():
 
     frame_footer = Frame(display_list, borderwidth = 0, relief=FLAT, bg=bg_gray)
     frame_footer.pack(side=BOTTOM, fill = X)
-    photo_footer = PhotoImage(file="img/footer_logo.png")
+    photo_footer = PhotoImage(file=resource_path("img/footer_logo.png"))
     title_footer = Label(frame_footer, text="by Rémy DAUBENFELD", image = photo_footer, compound ="right", font=(font, 10), bg=bg_gray)
     title_footer.image = photo_footer
     title_footer.pack(side=LEFT, expand=TRUE, pady=5) 
       
-    logo_linkedin = PhotoImage(file="img/linkedin.png")
+    logo_linkedin = PhotoImage(file=resource_path("img/linkedin.png"))
     linkedin_button = Button(frame_footer, image = logo_linkedin, relief = FLAT, cursor="tcross")
     linkedin_button.image = logo_linkedin
     linkedin_button.bind("<Button-1>", linkedin)
     linkedin_button.pack(side=RIGHT, padx=10)
 
-    logo_github = PhotoImage(file="img/github.png")
+    logo_github = PhotoImage(file=resource_path("img/github.png"))
     github_button = Button(frame_footer, image = logo_github, relief = FLAT, cursor="tcross")
     github_button.image = logo_github
     github_button.bind("<Button-1>", github)
@@ -158,31 +174,31 @@ def menu():
     frame_button.pack(fill=X)
 
    # Ajout des bouttons du menu
-    add_photo = PhotoImage(file="img/add.png")
+    add_photo = PhotoImage(file=resource_path("img/add.png"))
     add_task_button = Button(frame_button, text = "Ajouter", image = add_photo, compound ="left", relief = FLAT, bg = bg_green, fg = fg_white, cursor="tcross", width = 100, height = 20, bd = 0, activebackground = bg_green)
     add_task_button.image = add_photo
     add_task_button.bind("<Button-1>", add_task_window)
     add_task_button.pack(side=tk.LEFT, pady=20, expand=True)
     
-    edit_photo = PhotoImage(file="img/edit.png")
+    edit_photo = PhotoImage(file=resource_path("img/edit.png"))
     edit_task_button = Button(frame_button, text = "Editer", image = edit_photo, compound ="left", relief = FLAT, bg = bg_gray, cursor="tcross", width = 100, height = 20, bd = 0, activebackground=bg_gray)
     edit_task_button.image = edit_photo
     edit_task_button.bind("<Button-1>", edit_task_window)
     edit_task_button.pack(side=tk.LEFT, pady=20, expand=True)
     
-    start_photo = PhotoImage(file="img/start.png")
+    start_photo = PhotoImage(file=resource_path("img/start.png"))
     start_task_button = Button(frame_button, text = "Débuter", image = start_photo, compound ="left", relief = FLAT, bg = bg_gray, cursor="tcross", width = 100, height = 20, bd = 0, activebackground=bg_gray)
     start_task_button.image = start_photo
     start_task_button.bind("<Button-1>", start_task_window)
     start_task_button.pack(side=tk.LEFT, pady=20, expand=True)
     
-    complete_photo = PhotoImage(file="img/finish.png")
+    complete_photo = PhotoImage(file=resource_path("img/finish.png"))
     complete_task_button = Button(frame_button, text = "Finaliser", image = complete_photo, compound ="left", relief = FLAT, bg = bg_gray, cursor="tcross", width = 100, height = 20, bd = 0, activebackground=bg_gray)
     complete_task_button.image = complete_photo
     complete_task_button.bind("<Button-1>", complete_task_window)
     complete_task_button.pack(side=tk.LEFT, pady=20, expand=True)
     
-    delete_photo = PhotoImage(file="img/delete.png")
+    delete_photo = PhotoImage(file=resource_path("img/delete.png"))
     delete_task_button = Button(frame_button, text = "Supprimer", image=delete_photo, compound ="left", relief = FLAT, bg = bg_red, fg = fg_white, cursor="tcross", width = 100, height = 20, bd = 0, activebackground=bg_red)
     delete_task_button.image = delete_photo
     delete_task_button.bind("<Button-1>", delete_task_window)
@@ -427,13 +443,13 @@ def add_task_window(event):
         input_target_date = DateEntry(date_task_frame, bd = 1, font = (font, 10), date_pattern='dd-mm-yyyy')
         input_target_date.pack(side=LEFT, padx=10, pady=15)
 
-        validate_photo = PhotoImage(file="img/add.png")
+        validate_photo = PhotoImage(file=resource_path("img/add.png"))
         validate_button = Button(add_task_wind, text = "Ajouter", image = validate_photo, compound ="left", relief = FLAT,  bg = bg_green, fg = fg_white, cursor="tcross", width = 100, height = 20, bd = 0, activebackground = bg_green)
         validate_button.image = validate_photo
         validate_button.bind("<Button-1>", add_task)
         validate_button.pack(side=tk.LEFT, padx=10, expand=True)
 
-        quit_photo = PhotoImage(file="img/quit.png")
+        quit_photo = PhotoImage(file=resource_path("img/quit.png"))
         quit_button = Button(add_task_wind, text = "Fermer", image = quit_photo, compound ="left", relief = FLAT, bg = bg_red, fg = fg_white, cursor="tcross", width = 100, height = 20, bd = 0, activebackground = bg_red)
         quit_button.image = quit_photo
         quit_button.bind("<Button-1>", lambda event=None: close_add_task_window())
@@ -597,13 +613,13 @@ def edit_task_window(event):
             frame_button = Frame(edit_task_wind, pady= 10, bg=bg_yellow)
             frame_button.pack(side=BOTTOM, fill=X)
 
-            validate_photo = PhotoImage(file="img/validate.png")
+            validate_photo = PhotoImage(file=resource_path("img/validate.png"))
             validate_button = Button(frame_button, text = "Valider", image = validate_photo, compound ="left", relief = FLAT,  bg = bg_green,   fg = fg_white, cursor="tcross", width = 100, height = 20, bd =    0, activebackground = bg_green)
             validate_button.image = validate_photo
             validate_button.bind("<Button-1>", validate)
             validate_button.pack(side=LEFT, padx=10, expand=True)
 
-            quit_photo = PhotoImage(file="img/quit.png")
+            quit_photo = PhotoImage(file=resource_path("img/quit.png"))
             quit_button = Button(frame_button, text = "Fermer", image = quit_photo, compound ="left", relief = FLAT, bg = bg_red, fg =  fg_white, cursor="tcross", width = 100, height = 20, bd = 0, activebackground = bg_red)
             quit_button.image = quit_photo
             quit_button.bind("<Button-1>", lambda event=None: close_edit_task_window())
