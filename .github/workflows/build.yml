@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PyDo-linux
-          path: dist/PyDo
+          path: dist/PyDo-linux
 
   build-windows:
     runs-on: windows-latest
@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PyDo-windows
-          path: dist/PyDo.exe
+          path: dist/PyDo-windows
 
   release:
     needs: [build-linux, build-windows]
@@ -82,5 +82,5 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            PyDo
-            PyDo.exe
+            PyDo-linux
+            PyDo-windows
