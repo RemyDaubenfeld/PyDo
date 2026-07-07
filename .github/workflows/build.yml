@@ -25,13 +25,24 @@ jobs:
         run: |
           pyinstaller --onefile --name PyDo-linux \
             --add-data "src/img:img" \
+            --hidden-import "PIL._tkinter_finder" \
             src/main.py
+
+      - name: Package Linux archive
+        run: |
+          mkdir -p package
+          cp dist/PyDo-linux package/
+          cp packaging/linux/install.sh package/
+          cp packaging/linux/README.txt package/
+          chmod +x package/PyDo-linux package/install.sh
+          tar -czvf PyDo-linux.tar.gz -C package .       
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: PyDo-linux
-          path: dist/PyDo-linux
+          path: PyDo-linux.tar.gz
+          if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
@@ -49,11 +60,13 @@ jobs:
           pip install pyinstaller
 
       - name: Build Windows executable
+        shell: bash
         run: |
-          pyinstaller --onefile --windowed --name PyDo-windows `
-            --add-data "src/img;img" `
-            --icon src/img/logo.ico `
-            src/main.py
+          pyinstaller --onefile --windowed --name PyDo-windows \
+          --add-data "src/img;img" \
+          --hidden-import "PIL._tkinter_finder" \
+          --icon src/img/logo.ico \
+          src/main.py
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -82,5 +95,5 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            PyDo-linux
+            PyDo-linux.tar.gz
             PyDo-windows.exe
